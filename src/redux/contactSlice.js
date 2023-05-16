@@ -22,8 +22,6 @@ export const searchContacts = createAsyncThunk(
   }
 );
 
-
-
 const contactSlice = createSlice({
   name: "contacts",
   initialState: {

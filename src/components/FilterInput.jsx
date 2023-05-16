@@ -39,6 +39,9 @@ function FilterInput() {
       try {
         const response = await axios.get(`/contacts?search=${searchTerm}`);
         setContacts(response.data);
+        if (response.data.length === 0) {
+          alert("Такого контакту там нема)");
+        }
       } catch (error) {
         console.error(error);
       }

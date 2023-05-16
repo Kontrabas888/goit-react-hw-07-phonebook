@@ -4,9 +4,9 @@ import PropTypes from "prop-types";
 function ContactList({ contacts, onContactDelete }) {
   return (
     <ul>
-      {contacts.map(({ id, name, number }) => (
+      {contacts.map(({ id, name, phone }) => (
         <li key={id}>
-          {name}: {number}
+          {name}: {phone}
           <button type="button" onClick={() => onContactDelete(id)}>
             Delete
           </button>
@@ -21,7 +21,7 @@ ContactList.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
+      phone: PropTypes.string.isRequired,
     })
   ).isRequired,
   onContactDelete: PropTypes.func.isRequired,

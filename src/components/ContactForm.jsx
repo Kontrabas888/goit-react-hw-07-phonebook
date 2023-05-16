@@ -1,17 +1,12 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { addContact } from "../redux/operations";
 
 function ContactForm({ onContactSubmit }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
 
-  const dispatch = useDispatch();
-
   const handleSubmit = (event) => {
     event.preventDefault();
     const newContact = { name, phone };
-    dispatch(addContact(newContact));
     onContactSubmit(newContact);
     setName("");
     setPhone("");
