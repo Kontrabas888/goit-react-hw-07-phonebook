@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 function ContactList({ contacts, onContactDelete }) {
+  const [contactList, setContactList] = useState(contacts);
+
+  useEffect(() => {
+    setContactList(contacts);
+  }, [contacts]);
+
+  const handleContactDelete = (id) => {
+    onContactDelete(id);
+    setContactList(contactList.filter((contact) => contact.id !== id));
+  };
+
   return (
     <ul>
-      {contacts.map(({ id, name, phone }) => (
+      {contactList.map(({ id, name, phone }) => (
         <li key={id}>
           {name}: {phone}
-          <button type="button" onClick={() => onContactDelete(id)}>
+          <button className="delete-contact" type="button" onClick={() => handleContactDelete(id)}>
             Delete
           </button>
         </li>

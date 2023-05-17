@@ -1,37 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { updateFilter, searchContacts } from "../redux/contactSlice";
 import axios from 'axios';
-import { deleteContact } from '../redux/operations';
 import ContactList from './ContactList';
 
 function FilterInput() {
-  const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
   const [contacts, setContacts] = useState([]);
 
-  useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const response = await axios.get('/contacts');
-        setContacts(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+ useEffect(() => {
+  fetchContacts();
+}, []);
 
-    fetchContacts();
-  }, []);
+  const fetchContacts = async () => {
+    try {
+      const response = await axios.get('/contacts');
+      setContacts(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleFilterChange = (event) => {
-    const searchTerm = event.target.value;
-    dispatch(updateFilter(searchTerm));
-    setSearchTerm(searchTerm);
-    if (searchTerm) {
-      dispatch(searchContacts(searchTerm));
-    } else {
-      setContacts([]);
-    }
+    setSearchTerm(event.target.value);
   };
 
   const handleKeyPress = async (event) => {
@@ -40,7 +29,7 @@ function FilterInput() {
         const response = await axios.get(`/contacts?search=${searchTerm}`);
         setContacts(response.data);
         if (response.data.length === 0) {
-          alert("Такого контакту там нема)");
+          alert("Такого контакта там нет)");
         }
       } catch (error) {
         console.error(error);
@@ -48,15 +37,17 @@ function FilterInput() {
     }
   };
 
-  const handleContactDelete = async (id) => {
-    try {
-      await dispatch(deleteContact(id));
-      const response = await axios.get('/contacts');
-      setContacts(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const handleContactDelete = async (id) => {
+  try {
+    await axios.delete(`/contacts/${id}`);
+    const response = await axios.get('/contacts');
+    const updatedContacts = response.data.filter((contact) => contact.id !== id);
+    setContacts(updatedContacts);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
   return (
     <div>

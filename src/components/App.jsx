@@ -3,53 +3,51 @@ import { useDispatch, useSelector } from "react-redux";
 import ContactForm from "./ContactForm";
 import ContactList from "./ContactList";
 import FilterInput from "./FilterInput";
-import { PersistGate } from "redux-persist/integration/react";
-import { persistor, store } from "../redux/store";
-import { Provider } from "react-redux";
+import { fetchContacts, addContact, searchContacts, deleteContact } from "../redux/operations";
 import "../redux/style.css";
-import { fetchAllUsers, addContact } from "../redux/operations";
-import { deleteContact } from "../redux/contactSlice";
 
 function App() {
   const [showForm, setShowForm] = useState(false);
   const dispatch = useDispatch();
   const { items: contacts = [], filter } = useSelector((state) => state.contacts);
 
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
-
   useEffect(() => {
-    dispatch(fetchAllUsers());
+    dispatch(fetchContacts());
   }, [dispatch]);
 
-  const handleAddContact = (contact) => {
-    dispatch(addContact(contact));
-    setShowForm(false);
+  const handleAddContact = async (contact) => {
+    try {
+      await dispatch(addContact(contact));
+      setShowForm(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleDeleteContact = (id) => {
-    dispatch(deleteContact(id));
+  const handleDeleteContact = async (id) => {
+    try {
+      await dispatch(deleteContact(id));
+      dispatch(searchContacts(filter));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSearchContacts = (term) => {
+    dispatch(searchContacts(term));
   };
 
   return (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <div>
-          <h1>Phonebook</h1>
-          <button onClick={() => setShowForm(!showForm)}>
-            {showForm ? "Hide Form" : "Add Contact"}
-          </button>
-          {showForm && <ContactForm onContactSubmit={handleAddContact} />}
-          <h2>Contacts</h2>
-          <FilterInput />
-          <ContactList
-            contacts={filteredContacts}
-            onContactDelete={handleDeleteContact}
-          />
-        </div>
-      </PersistGate>
-    </Provider>
+    <div className="container">
+      <h1>Phonebook</h1>
+      <button onClick={() => setShowForm(!showForm)}>
+        {showForm ? "Hide Form" : "Add Contact"}
+      </button>
+      {showForm && <ContactForm onContactSubmit={handleAddContact} />}
+      <h2>Contacts</h2>
+      <FilterInput onFilterChange={handleSearchContacts} />
+      <ContactList contacts={contacts} onContactDelete={handleDeleteContact} />
+    </div>
   );
 }
 

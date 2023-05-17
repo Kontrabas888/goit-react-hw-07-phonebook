@@ -91,6 +91,7 @@ button.add-contact:hover {
 }
 
 button.delete-contact {
+  margin-left: 25px;
   background-color: #dc3545;
   color: #fff;
 }
