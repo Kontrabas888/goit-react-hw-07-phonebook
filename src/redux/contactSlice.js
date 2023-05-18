@@ -3,7 +3,6 @@ import {
   fetchContacts,
   addContact,
   deleteContact,
-  updateContacts,
 } from "./operations";
 
 const contactSlice = createSlice({
@@ -35,9 +34,6 @@ const contactSlice = createSlice({
           (contact) => contact.id !== action.payload
         );
       })
-      .addCase(updateContacts, (state, action) => {
-        state.items = action.payload;
-      });
   },
 });
 

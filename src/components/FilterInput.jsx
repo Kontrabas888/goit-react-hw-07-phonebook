@@ -29,7 +29,7 @@ function FilterInput() {
         const response = await axios.get(`/contacts?search=${searchTerm}`);
         setContacts(response.data);
         if (response.data.length === 0) {
-          alert("Такого контакта там нет)");
+          alert("Введений вами контакт відсутній");
         }
       } catch (error) {
         console.error(error);
