@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import ContactList from './ContactList';
+import ContactDetails from './ContactDetails';
 
 function FilterInput() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [contacts, setContacts] = useState([]);
+  const [searchResult, setSearchResult] = useState(null);
 
- useEffect(() => {
-  fetchContacts();
-}, []);
+  useEffect(() => {
+    fetchContacts();
+  }, []);
 
   const fetchContacts = async () => {
     try {
       const response = await axios.get('/contacts');
-      setContacts(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -27,9 +27,11 @@ function FilterInput() {
     if (event.key === "Enter") {
       try {
         const response = await axios.get(`/contacts?search=${searchTerm}`);
-        setContacts(response.data);
+        console.log(response.data);
         if (response.data.length === 0) {
-          alert("Введений вами контакт відсутній");
+          alert("Введенний вами контакт відсутній");
+        } else {
+          setSearchResult(response.data[0]);
         }
       } catch (error) {
         console.error(error);
@@ -37,17 +39,9 @@ function FilterInput() {
     }
   };
 
-const handleContactDelete = async (id) => {
-  try {
-    await axios.delete(`/contacts/${id}`);
-    const response = await axios.get('/contacts');
-    const updatedContacts = response.data.filter((contact) => contact.id !== id);
-    setContacts(updatedContacts);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
+  const handleCloseDetails = () => {
+    setSearchResult(null);
+  };
 
   return (
     <div>
@@ -60,7 +54,9 @@ const handleContactDelete = async (id) => {
           value={searchTerm}
         />
       </label>
-      <ContactList contacts={contacts} onContactDelete={handleContactDelete} />
+      {searchResult && (
+        <ContactDetails contact={searchResult} onClose={handleCloseDetails} />
+      )}
     </div>
   );
 }

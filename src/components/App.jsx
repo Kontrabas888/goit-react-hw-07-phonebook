@@ -9,7 +9,7 @@ import "../redux/style.css";
 function App() {
   const [showForm, setShowForm] = useState(false);
   const dispatch = useDispatch();
-  const { items: contacts = [], filter } = useSelector((state) => state.contacts);
+  const { items: contacts = [] } = useSelector((state) => state.contacts);
 
   useEffect(() => {
     dispatch(fetchContacts());
@@ -18,6 +18,7 @@ function App() {
   const handleAddContact = async (contact) => {
     try {
       await dispatch(addContact(contact));
+      dispatch(fetchContacts());
       setShowForm(false);
     } catch (error) {
       console.log(error);
@@ -27,7 +28,7 @@ function App() {
   const handleDeleteContact = async (id) => {
     try {
       await dispatch(deleteContact(id));
-      dispatch(searchContacts(filter));
+      dispatch(fetchContacts());
     } catch (error) {
       console.log(error);
     }
